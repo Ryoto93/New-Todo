@@ -238,28 +238,24 @@ export function useProjectData() {
 	};
 
 	const updateTaskTimeBlock = (taskId: string, targetBlock: string) => {
-		const getNewDate = (block: string): Date => {
+		const getNewDate = (block: string): Date | null => {
 			const now = new Date();
-			// JST（日本標準時）で今日の日付を取得
+			// JST（日本標準時）で今日の日付を取得し、時刻をリセット
 			const todayJST = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
-			todayJST.setHours(23, 59, 59, 999); // 時刻は日の終わりに設定
-
+			todayJST.setHours(0, 0, 0, 0);
 			switch(block) {
 				case '今日': return todayJST;
 				case '明日': return new Date(todayJST.setDate(todayJST.getDate() + 1));
-				case '3日後': return new Date(todayJST.setDate(todayJST.getDate() + 3));
-				case '1週間後': return new Date(todayJST.setDate(todayJST.getDate() + 7));
-				case '2週間後': return new Date(todayJST.setDate(todayJST.getDate() + 14));
-				case 'それ以降': return new Date(todayJST.setDate(todayJST.getDate() + 30));
-				// '期限切れ' の場合は日付を変更しない、または特定の過去の日付を設定するなど仕様による
-				// ここでは何もしない（日付を更新しない）
-				default: return new Date();
+				case '3日後': return new Date(new Date().setDate(new Date().getDate() + 3));
+				case '1週間後': return new Date(new Date().setDate(new Date().getDate() + 7));
+				case '2週間後': return new Date(new Date().setDate(new Date().getDate() + 14));
+				case 'それ以降': return new Date(new Date().setDate(new Date().getDate() + 30));
+				default: return null; // 期限切れなど、日付を変更しない場合
 			}
 		};
 
 		const newDueDate = getNewDate(targetBlock);
-		// 「期限切れ」にドロップした場合は日付を更新しない
-		if (targetBlock === '期限切れ') return;
+		if (!newDueDate) return; // 日付がnullなら何もしない
 
 		const newProjects = JSON.parse(JSON.stringify(projects));
 
@@ -268,7 +264,7 @@ export function useProjectData() {
 				const task = proj.tasks.find(t => t.id === taskId);
 				if (task) {
 					task.dueDate = newDueDate.toISOString();
-					task.period = null; // 期間設定はリセット
+					task.period = null;
 					return true;
 				}
 				if (findAndUpdate(proj.subProjects)) return true;

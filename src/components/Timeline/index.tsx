@@ -14,26 +14,12 @@ type Props = {
 export function Timeline({ tasks, onUpdateTaskTimeBlock }: Props) {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    if (!over || active.id === over.id) return;
 
-    // over.idがnullの場合や、自分自身の上にドロップした場合は何もしない
-    if (!over || active.id === over.id) {
-      return;
-    }
-    
-    // active（ドラッグされたアイテム）が属していたコンテナIDを取得
     const activeContainer = active.data.current?.sortable?.containerId;
-    // over（ドロップ先）が属しているコンテナIDを取得
     const overContainer = over.data.current?.sortable?.containerId || over.id;
-    
-    // 別のコンテナに移動した場合のみ処理
-    if (activeContainer !== overContainer) {
-      const taskId = String(active.id);
-      const targetBlock = String(overContainer);
-      
-      // タイムブロックのリストに含まれるIDにドロップされた場合のみ実行
-      if (timeBlocks.includes(targetBlock)) {
-        onUpdateTaskTimeBlock(taskId, targetBlock);
-      }
+    if (activeContainer !== overContainer && timeBlocks.includes(String(overContainer))) {
+      onUpdateTaskTimeBlock(String(active.id), String(overContainer));
     }
   };
 
