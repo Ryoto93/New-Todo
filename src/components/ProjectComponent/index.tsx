@@ -26,10 +26,11 @@ type Props = {
   onOpenEditProjectModal: (project: Project) => void; // 型定義追加
   onDeleteProject: (projectId: string) => void; // 型定義追加
   onToggleSubtask: (taskId: string, subtaskId: string) => void; // 型定義追加
+  onUpdateTaskTimeBlock: (taskId: string, targetBlock: string) => void; // 型定義追加
 };
 
 // ProjectCardからProjectComponentへ改名し、再帰的に自分を呼び出す
-export function ProjectComponent({ project, level, onToggleTask, onAddTask, onDeleteTask, onOpenEditModal, onOpenAddModal, onOpenAddSubProjectModal, onOpenEditProjectModal, onDeleteProject, onToggleSubtask }: Props) {
+export function ProjectComponent({ project, level, onToggleTask, onAddTask, onDeleteTask, onOpenEditModal, onOpenAddModal, onOpenAddSubProjectModal, onOpenEditProjectModal, onDeleteProject, onToggleSubtask, onUpdateTaskTimeBlock }: Props) {
   const totalTasks = getTotalTasks(project);
   const completedTasks = getCompletedTasks(project);
   const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
@@ -68,7 +69,7 @@ export function ProjectComponent({ project, level, onToggleTask, onAddTask, onDe
       </div>
 
       {/* ★ ここから追加・変更 ★ */}
-      {level === 0 && <Timeline tasks={allTasks} />} {/* 最上位のプロジェクトにのみTimelineを表示、全タスクをpropsで渡す */}
+      {level === 0 && <Timeline tasks={allTasks} onUpdateTaskTimeBlock={onUpdateTaskTimeBlock} />} {/* 最上位のプロジェクトにのみTimelineを表示、全タスクをpropsで渡す */}
       <div className="project-contents">
         <div className="tasks-and-subprojects">
           <h4>タスク一覧</h4>
@@ -98,6 +99,7 @@ export function ProjectComponent({ project, level, onToggleTask, onAddTask, onDe
               onOpenEditProjectModal={onOpenEditProjectModal}
               onDeleteProject={onDeleteProject}
               onToggleSubtask={onToggleSubtask}
+              onUpdateTaskTimeBlock={onUpdateTaskTimeBlock}
             />
             ))}
                     <button className="add-sub-project-button" onClick={() => onOpenAddSubProjectModal(project.id)}>

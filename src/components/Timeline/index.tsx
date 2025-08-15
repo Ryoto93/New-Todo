@@ -6,12 +6,35 @@ import { getTaskTimeBlock, getTaskTimeBlocksForPeriod, timeBlocks } from '../../
 import { TimelineTask } from '../TimelineTask';
 import './style.css';
 
-type Props = { tasks: Task[] };
+type Props = {
+  tasks: Task[];
+  onUpdateTaskTimeBlock: (taskId: string, targetBlock: string) => void;
+};
 
-export function Timeline({ tasks }: Props) {
+export function Timeline({ tasks, onUpdateTaskTimeBlock }: Props) {
   const handleDragEnd = (event: DragEndEvent) => {
-    console.log("Drag end event:", event);
-    // ここに後でロジックを追加する
+    const { active, over } = event;
+
+    // over.idがnullの場合や、自分自身の上にドロップした場合は何もしない
+    if (!over || active.id === over.id) {
+      return;
+    }
+    
+    // active（ドラッグされたアイテム）が属していたコンテナIDを取得
+    const activeContainer = active.data.current?.sortable?.containerId;
+    // over（ドロップ先）が属しているコンテナIDを取得
+    const overContainer = over.data.current?.sortable?.containerId || over.id;
+    
+    // 別のコンテナに移動した場合のみ処理
+    if (activeContainer !== overContainer) {
+      const taskId = String(active.id);
+      const targetBlock = String(overContainer);
+      
+      // タイムブロックのリストに含まれるIDにドロップされた場合のみ実行
+      if (timeBlocks.includes(targetBlock)) {
+        onUpdateTaskTimeBlock(taskId, targetBlock);
+      }
+    }
   };
 
   return (
@@ -40,6 +63,7 @@ export function Timeline({ tasks }: Props) {
                 <div className="time-block-header">{block}</div>
                 <div className="time-block-content">
                   <SortableContext
+                    id={block}
                     items={blockTasks.map(t => t.id)}
                     strategy={verticalListSortingStrategy}
                   >
