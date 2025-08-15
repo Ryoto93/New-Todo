@@ -1,5 +1,5 @@
 // 型定義（暫定）。すでに型が存在する場合は上書きしてください。
-export type Priority = 'P1' | 'P2' | 'P3';
+export type Priority = 'P1' | 'P2' | 'P3' | 'P4';
 export type StrategicImportance = 'S' | 'A' | 'B' | 'C';
 export type Health = 'green' | 'yellow' | 'red';
 

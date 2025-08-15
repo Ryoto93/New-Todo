@@ -240,22 +240,21 @@ export function useProjectData() {
 	const updateTaskTimeBlock = (taskId: string, targetBlock: string) => {
 		const getNewDate = (block: string): Date | null => {
 			const now = new Date();
-			// JST（日本標準時）で今日の日付を取得し、時刻をリセット
 			const todayJST = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
-			todayJST.setHours(0, 0, 0, 0);
+			todayJST.setHours(23, 59, 59, 999); // 時刻は一日の終わりに設定
 			switch(block) {
 				case '今日': return todayJST;
-				case '明日': return new Date(todayJST.setDate(todayJST.getDate() + 1));
-				case '3日後': return new Date(new Date().setDate(new Date().getDate() + 3));
-				case '1週間後': return new Date(new Date().setDate(new Date().getDate() + 7));
-				case '2週間後': return new Date(new Date().setDate(new Date().getDate() + 14));
-				case 'それ以降': return new Date(new Date().setDate(new Date().getDate() + 30));
-				default: return null; // 期限切れなど、日付を変更しない場合
+				case '明日': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 1));
+				case '3日後': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 3));
+				case '1週間後': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 7));
+				case '2週間後': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 14));
+				case 'それ以降': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 30));
+				default: return null;
 			}
 		};
 
 		const newDueDate = getNewDate(targetBlock);
-		if (!newDueDate) return; // 日付がnullなら何もしない
+		if (!newDueDate) return;
 
 		const newProjects = JSON.parse(JSON.stringify(projects));
 

@@ -14,8 +14,8 @@ type Props = {
 export function Timeline({ tasks, onUpdateTaskTimeBlock }: Props) {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (!over || active.id === over.id) return;
 
+    if (!over) return;
     const activeContainer = active.data.current?.sortable?.containerId;
     const overContainer = over.data.current?.sortable?.containerId || over.id;
     if (activeContainer !== overContainer && timeBlocks.includes(String(overContainer))) {
@@ -24,36 +24,24 @@ export function Timeline({ tasks, onUpdateTaskTimeBlock }: Props) {
   };
 
   return (
-    <DndContext
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
+    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <div className="timeline-container">
         <div className="timeline-flow">
           {timeBlocks.map(block => {
-            // 期間タスクと単一期限タスクを区別してフィルタリング
-            const blockTasks = tasks.filter(task => {
+            const tasksInBlock = tasks.filter(task => {
               if (task.period) {
-                // 期間タスクの場合、その期間がこのブロックにまたがるかチェック
                 return getTaskTimeBlocksForPeriod(task).includes(block);
               } else {
-                // 単一期限タスクの場合、従来のロジック
                 return getTaskTimeBlock(task) === block;
               }
             });
-            
-            const isOverdue = block === '期限切れ';
-            
+
             return (
-              <div key={block} className={`time-block ${isOverdue ? 'overdue' : ''}`}>
+              <div key={block} className={`time-block ${block === '期限切れ' ? 'overdue' : ''}`}>
                 <div className="time-block-header">{block}</div>
                 <div className="time-block-content">
-                  <SortableContext
-                    id={block}
-                    items={blockTasks.map(t => t.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {blockTasks.map(task => <TimelineTask key={task.id} task={task} />)}
+                  <SortableContext id={block} items={tasksInBlock.map(t => t.id)} strategy={verticalListSortingStrategy}>
+                    {tasksInBlock.map(task => <TimelineTask key={task.id} task={task} />)}
                   </SortableContext>
                 </div>
               </div>
