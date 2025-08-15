@@ -1,0 +1,42 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f0f2f5; /* 少し落ち着いた背景色 */
+}
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 40px; /* 大胆な余白 */
+}
+
+.app-header {
+  margin-bottom: 80px; /* 大胆な余白 */
+  text-align: center;
+}
+
+.app-header h1 {
+  font-size: 3.5em; /* 大きめのフォント */
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.add-project-button-header {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 1.1em;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 20px;
+  transition: background-color 0.2s;
+}
+
+.add-project-button-header:hover {
+  background-color: #218838;
+}

@@ -1,0 +1,135 @@
+.project-component {
+  background-color: var(--color-card-background);
+  border-radius: var(--border-radius-card);
+  border: 1px solid var(--color-border);
+  padding: 24px 32px;
+  margin-bottom: 60px; /* 大胆な余白 */
+  box-shadow: var(--shadow-card);
+  transition: box-shadow var(--transition-main);
+}
+
+.project-component:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+.project-component.sub-project {
+  background-color: var(--color-background-offset);
+  margin-top: 24px;
+  box-shadow: var(--shadow-card);
+  padding: 20px 24px;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.project-name {
+  font-size: 1.8em;
+  font-weight: 700;
+  margin: 0;
+}
+
+.project-meta-and-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.project-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-main);
+}
+
+.icon-button:hover {
+  background-color: #f0f0f0;
+  color: var(--color-text-primary);
+}
+
+.icon-button.danger:hover {
+  color: #ff4d4f;
+}
+
+/* 既存のスタイルに追記・変更 */
+.project-contents {
+  display: flex;
+  gap: 20px;
+}
+
+.tasks-and-subprojects {
+  flex-grow: 1;
+}
+
+.tasks-and-subprojects h4 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: 8px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.project-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.9em;
+  color: var(--color-text-secondary);
+}
+
+.task-list {
+  margin-top: 20px;
+  border-top: 1px solid var(--color-border);
+  padding-top: 16px;
+}
+
+.sub-project .task-list {
+  border-top-color: var(--color-border);
+}
+
+.sub-project-list {
+  margin-top: 20px;
+}
+
+.add-task-button-simple,
+.add-sub-project-button {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9em;
+  padding: 8px;
+  border-radius: var(--border-radius-button);
+  width: 100%;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--transition-main), color var(--transition-main);
+  margin-top: 8px;
+}
+
+.add-task-button-simple:hover {
+  background-color: #f5f5f7; /* より薄いグレー */
+  color: var(--color-text-primary);
+}
+
+.add-sub-project-button:hover {
+  background-color: #ececec; /* より濃いグレー */
+  color: var(--color-text-primary);
+} 

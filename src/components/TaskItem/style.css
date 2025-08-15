@@ -1,0 +1,73 @@
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.task-item.completed .task-title {
+  text-decoration: line-through;
+  color: #aaa;
+}
+
+/* .task-title の flex-grow を .task-main に移し、.task-due-date を追加 */
+.task-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.task-title {
+  cursor: pointer;
+}
+
+.task-due-date {
+  font-size: 0.8em;
+  color: #888;
+}
+
+.task-priority {
+  color: white;
+  font-weight: bold;
+  font-size: 0.75em;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.task-tags {
+  display: flex;
+  gap: 6px;
+}
+
+.task-tag {
+  background-color: #e6f7ff;
+  color: #1890ff;
+  font-size: 0.75em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #91d5ff;
+}
+
+.delete-task-button {
+  background-color: transparent;
+  border: none;
+  color: #aaa;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 0 5px;
+  border-radius: 4px;
+  visibility: hidden; /* 通常は見えないように */
+  opacity: 0;
+  transition: opacity 0.2s, background-color 0.2s;
+}
+
+.task-item:hover .delete-task-button {
+  visibility: visible; /* ホバー時に表示 */
+  opacity: 1;
+}
+
+.delete-task-button:hover {
+  background-color: #f0f0f0;
+  color: #ff4d4f;
+} 

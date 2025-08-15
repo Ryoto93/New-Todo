@@ -1,0 +1,48 @@
+:root {
+  /* Colors */
+  --color-background: #ffffff;
+  --color-background-offset: #fbfbfd;
+  --color-text-primary: #1d1d1f;
+  --color-text-secondary: #86868b;
+  --color-accent: #0071e3;
+  --color-border: #e0e0e0;
+  --color-card-background: #ffffff;
+  
+  /* Typography */
+  --font-heading: 'Inter', 'DM Sans', 'Noto Sans JP', sans-serif;
+  --font-body: 'Inter', 'Source Sans Pro', 'Noto Sans JP', sans-serif;
+  --line-height-base: 1.7;
+  
+  /* Layout */
+  --border-radius-card: 16px;
+  --border-radius-button: 10px;
+  --shadow-card: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-card-hover: 0 6px 16px rgba(0,0,0,0.08);
+  
+  /* Transitions */
+  --transition-main: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-background-offset);
+  color: var(--color-text-primary);
+  font-weight: 400;
+  line-height: var(--line-height-base);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border-radius: var(--border-radius-button);
+  transition: all var(--transition-main);
+}
