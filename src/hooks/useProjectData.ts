@@ -14,6 +14,47 @@ export function useProjectData() {
 		setItem(STORAGE_KEY, projects);
 	}, [projects]);
 
+	// ★ 磁気タイル機能：期限が過去のタスクを今日に自動引き寄せ
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			const now = new Date();
+			const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+			let needsUpdate = false;
+			const updatedProjects = JSON.parse(JSON.stringify(projects));
+			
+			const findAndPullTasks = (projArray: Project[]) => {
+				for (const proj of projArray) {
+					for (const task of proj.tasks) {
+						if (task.dueDate) {
+							const dueDate = new Date(task.dueDate);
+							dueDate.setHours(0, 0, 0, 0);
+							// 期限が過去（今日より前）のタスクを今日に引き寄せる
+							if (dueDate < today) {
+								const todayEndDate = new Date(today);
+								todayEndDate.setHours(23, 59, 59, 999);
+								task.dueDate = todayEndDate.toISOString();
+								needsUpdate = true;
+								console.log(`磁気タイル機能：タスク「${task.title}」を今日に引き寄せました`);
+							}
+						}
+					}
+					findAndPullTasks(proj.subProjects);
+				}
+			};
+			
+			findAndPullTasks(updatedProjects);
+			
+			if (needsUpdate) {
+				console.log("磁気タイル機能が作動しました：タスクを今日に引き寄せます。");
+				setProjects(updatedProjects);
+			}
+		}, 60000); // 60000ミリ秒 = 1分ごとにチェック
+		
+		// コンポーネントがアンマウントされた時にインターバルをクリアする
+		return () => clearInterval(intervalId);
+	}, [projects]); // projectsが変更されるたびにeffectを再設定
+
 	const toggleTaskCompletion = (taskId: string) => {
 		const newProjects = JSON.parse(JSON.stringify(projects)); // 深いコピーで安全にデータを複製
 
