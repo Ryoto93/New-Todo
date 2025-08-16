@@ -42,4 +42,18 @@
   background-color: #fff1f0;
   border-bottom-color: #ffccc7;
   color: #cf1322;
+}
+
+/* ドロップ可能エリアのスタイル */
+.time-block.drop-over {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* ドラッグ中のタスクのスタイル */
+.timeline-task.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+  z-index: 1000;
 } 

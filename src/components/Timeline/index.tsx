@@ -1,6 +1,6 @@
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { useDroppable } from '@dnd-kit/core';
 import type { Task } from '../../types';
 import { getTaskTimeBlock, getTaskTimeBlocksForPeriod, timeBlocks } from '../../utils/dateUtils';
 import { TimelineTask } from '../TimelineTask';
@@ -11,15 +11,44 @@ type Props = {
   onUpdateTaskTimeBlock: (taskId: string, targetBlock: string) => void;
 };
 
+// ドロップ可能な時間ブロックコンポーネント
+function DroppableTimeBlock({ 
+  block, 
+  tasks
+}: { 
+  block: string; 
+  tasks: Task[];
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: block });
+
+  return (
+    <div 
+      ref={setNodeRef}
+      className={`time-block ${block === '期限切れ' ? 'overdue' : ''} ${isOver ? 'drop-over' : ''}`}
+    >
+      <div className="time-block-header">{block}</div>
+      <div className="time-block-content">
+        {tasks.map(task => (
+          <TimelineTask key={task.id} task={task} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function Timeline({ tasks, onUpdateTaskTimeBlock }: Props) {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (!over) return;
-    const activeContainer = active.data.current?.sortable?.containerId;
-    const overContainer = over.data.current?.sortable?.containerId || over.id;
-    if (activeContainer !== overContainer && timeBlocks.includes(String(overContainer))) {
-      onUpdateTaskTimeBlock(String(active.id), String(overContainer));
+    
+    const taskId = String(active.id);
+    const targetBlock = String(over.id);
+    
+    // 時間ブロックにドロップされた場合のみ処理
+    if (timeBlocks.includes(targetBlock)) {
+      console.log(`タスク ${taskId} を ${targetBlock} に移動`);
+      onUpdateTaskTimeBlock(taskId, targetBlock);
     }
   };
 
@@ -37,14 +66,11 @@ export function Timeline({ tasks, onUpdateTaskTimeBlock }: Props) {
             });
 
             return (
-              <div key={block} className={`time-block ${block === '期限切れ' ? 'overdue' : ''}`}>
-                <div className="time-block-header">{block}</div>
-                <div className="time-block-content">
-                  <SortableContext id={block} items={tasksInBlock.map(t => t.id)} strategy={verticalListSortingStrategy}>
-                    {tasksInBlock.map(task => <TimelineTask key={task.id} task={task} />)}
-                  </SortableContext>
-                </div>
-              </div>
+              <DroppableTimeBlock
+                key={block}
+                block={block}
+                tasks={tasksInBlock}
+              />
             );
           })}
         </div>
