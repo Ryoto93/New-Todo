@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import type { Project, Task } from '../../types';
 import { TaskItem } from '../TaskItem';
 import { Timeline } from '../Timeline';
+import { TaskFilterSort, type SortOption, type FilterOptions } from '../TaskFilterSort';
 // ★ アイコンをインポート
 import { Settings, Trash2, PlusCircle } from 'lucide-react';
 import './style.css';
@@ -17,6 +19,7 @@ const getAllTasks = (project: Project): Task[] => {
 type Props = {
   project: Project;
   level: number; // 階層の深さを管理する新しいprops
+  searchTerm: string; // 検索キーワード
   onToggleTask: (taskId: string) => void; // propsの型定義を追加
   onAddTask: (projectId: string, newTask: Task) => void; // 型定義追加
   onDeleteTask: (taskId: string) => void; // 型定義追加
@@ -30,13 +33,37 @@ type Props = {
 };
 
 // ProjectCardからProjectComponentへ改名し、再帰的に自分を呼び出す
-export function ProjectComponent({ project, level, onToggleTask, onAddTask, onDeleteTask, onOpenEditModal, onOpenAddModal, onOpenAddSubProjectModal, onOpenEditProjectModal, onDeleteProject, onToggleSubtask, onUpdateTaskTimeBlock }: Props) {
+export function ProjectComponent({ project, level, searchTerm, onToggleTask, onAddTask, onDeleteTask, onOpenEditModal, onOpenAddModal, onOpenAddSubProjectModal, onOpenEditProjectModal, onDeleteProject, onToggleSubtask, onUpdateTaskTimeBlock }: Props) {
+  const [sortOption, setSortOption] = useState<SortOption>('default');
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({ hideCompleted: false });
+  
   const totalTasks = getTotalTasks(project);
   const completedTasks = getCompletedTasks(project);
   const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
   const healthEmoji = { green: '🟢', yellow: '🟡', red: '🔴' };
   const isSubProject = level > 0;
   const allTasks = getAllTasks(project); // 全タスクを収集
+
+  // ★ 検索ロジックを追加
+  const searchString = JSON.stringify(project).toLowerCase();
+  const isVisible = searchTerm ? searchString.includes(searchTerm.toLowerCase()) : true;
+
+  if (!isVisible) {
+    return null; // 検索にヒットしない場合は何も表示しない
+  }
+
+  // ★ ソートとフィルタを適用したタスクリストを計算
+  const sortedAndFilteredTasks = [...project.tasks]
+    .filter(task => !filterOptions.hideCompleted || !task.isCompleted)
+    .sort((a, b) => {
+      if (sortOption === 'priority') {
+        return a.priority.localeCompare(b.priority);
+      }
+      if (sortOption === 'dueDate' && a.dueDate && b.dueDate) {
+        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+      }
+      return 0;
+    });
   
   return (
     <div
@@ -72,40 +99,49 @@ export function ProjectComponent({ project, level, onToggleTask, onAddTask, onDe
       {level === 0 && <Timeline tasks={allTasks} onUpdateTaskTimeBlock={onUpdateTaskTimeBlock} />} {/* 最上位のプロジェクトにのみTimelineを表示、全タスクをpropsで渡す */}
       <div className="project-contents">
         <div className="tasks-and-subprojects">
-          <h4>タスク一覧</h4>
+          <div className="tasks-header">
+            <h4>タスク一覧</h4>
+            <TaskFilterSort
+              sortOption={sortOption}
+              filterOptions={filterOptions}
+              onSortChange={setSortOption}
+              onFilterChange={setFilterOptions}
+            />
+          </div>
           <div className="task-list">
-                    {project.tasks.map(task => 
-          <TaskItem key={task.id} task={task} onToggle={onToggleTask} onDelete={onDeleteTask} onOpenEditModal={onOpenEditModal} onToggleSubtask={onToggleSubtask} />
-        )}
+            {sortedAndFilteredTasks.map(task => 
+              <TaskItem key={task.id} task={task} onToggle={onToggleTask} onDelete={onDeleteTask} onOpenEditModal={onOpenEditModal} onToggleSubtask={onToggleSubtask} />
+            )}
             <button className="add-task-button-simple" onClick={() => onOpenAddModal(project.id)}>
-          <PlusCircle size={16} />
-          <span>タスクを追加</span>
-        </button>
+              <PlusCircle size={16} />
+              <span>タスクを追加</span>
+            </button>
           </div>
           
           {project.subProjects.length > 0 && <h4>サブプロジェクト</h4>}
           <div className="sub-project-list">
             {project.subProjects.map(subProject => (
-                          <ProjectComponent
-              key={subProject.id}
-              project={subProject}
-              level={level + 1}
-              onToggleTask={onToggleTask}
-              onAddTask={onAddTask}
-              onDeleteTask={onDeleteTask}
-              onOpenEditModal={onOpenEditModal}
-              onOpenAddModal={onOpenAddModal}
-              onOpenAddSubProjectModal={onOpenAddSubProjectModal}
-              onOpenEditProjectModal={onOpenEditProjectModal}
-              onDeleteProject={onDeleteProject}
-              onToggleSubtask={onToggleSubtask}
-              onUpdateTaskTimeBlock={onUpdateTaskTimeBlock}
-            />
+              <ProjectComponent
+                key={subProject.id}
+                project={subProject}
+                level={level + 1}
+                searchTerm={searchTerm}
+                onToggleTask={onToggleTask}
+                onAddTask={onAddTask}
+                onDeleteTask={onDeleteTask}
+                onOpenEditModal={onOpenEditModal}
+                onOpenAddModal={onOpenAddModal}
+                onOpenAddSubProjectModal={onOpenAddSubProjectModal}
+                onOpenEditProjectModal={onOpenEditProjectModal}
+                onDeleteProject={onDeleteProject}
+                onToggleSubtask={onToggleSubtask}
+                onUpdateTaskTimeBlock={onUpdateTaskTimeBlock}
+              />
             ))}
-                    <button className="add-sub-project-button" onClick={() => onOpenAddSubProjectModal(project.id)}>
-          <PlusCircle size={16} />
-          <span>サブプロジェクトを追加</span>
-        </button>
+            <button className="add-sub-project-button" onClick={() => onOpenAddSubProjectModal(project.id)}>
+              <PlusCircle size={16} />
+              <span>サブプロジェクトを追加</span>
+            </button>
           </div>
         </div>
         

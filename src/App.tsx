@@ -7,11 +7,13 @@ import { TaskModal } from './components/TaskModal';
 import { ViewSwitcher } from './components/ViewSwitcher';
 import type { ViewMode } from './components/ViewSwitcher';
 import { CalendarView } from './components/CalendarView';
+import { Search } from 'lucide-react';
 import './App.css';
 
 function App() {
   const { projects, toggleTaskCompletion, addTask, deleteTask, updateTask, addProject, addSubProject, updateProject, deleteProject, toggleSubtaskCompletion, addSubtask, deleteSubtask, updateTaskTimeBlock } = useProjectData();
   const [view, setView] = useState<ViewMode>('flow');
+  const [searchTerm, setSearchTerm] = useState('');
   const [modalState, setModalState] = useState<{ mode: 'edit' | 'add'; task?: Task; projectId?: string } | null>(null);
   const [projectModalState, setProjectModalState] = useState<{ mode: 'add' | 'addSub' | 'edit'; project?: Project; parentId?: string } | null>(null);
 
@@ -49,7 +51,18 @@ function App() {
       <header className="app-header">
         <h1>Flow TODO App</h1>
       </header>
-      <ViewSwitcher currentView={view} onViewChange={setView} />
+      <div className="app-controls">
+        <div className="search-bar">
+          <Search size={18} />
+          <input
+            type="text"
+            placeholder="プロジェクトやタスクを検索..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <ViewSwitcher currentView={view} onViewChange={setView} />
+      </div>
       {view === 'flow' ? (
         <>
           <main>
@@ -61,6 +74,7 @@ function App() {
                 key={project.id} 
                 project={project} 
                 level={0} 
+                searchTerm={searchTerm}
                 onToggleTask={toggleTaskCompletion}
                 onAddTask={addTask}
                 onDeleteTask={deleteTask}

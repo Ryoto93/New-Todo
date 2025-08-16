@@ -40,3 +40,39 @@ body {
 .add-project-button-header:hover {
   background-color: #218838;
 }
+
+/* 検索バーと表示切替スイッチのレイアウト */
+.app-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  width: 300px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar svg {
+  color: #666;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 1em;
+  background: none;
+}
+
+.search-bar input::placeholder {
+  color: #999;
+}

@@ -132,4 +132,20 @@
 .add-sub-project-button:hover {
   background-color: #ececec; /* より濃いグレー */
   color: var(--color-text-primary);
+}
+
+/* タスク一覧ヘッダーとコントロールパネルの横並びレイアウト */
+.tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: 8px;
+  margin-bottom: 0; /* task-listのpadding-topと相殺 */
+}
+
+.tasks-header h4 {
+  margin: 0;
+  border: none;
+  padding: 0;
 } 
