@@ -9,6 +9,10 @@ export const initialData: Project[] = [
 		tasks: [
 			{ id: 'task-1', title: '緊急レビュー', isCompleted: false, priority: 'P1', dueDate: new Date('2025-08-15T15:00:00').toISOString(), period: null, tags: ['#品質管理', '#緊急'], subtasks: [] },
 			{ id: 'task-2', title: 'マーケティング資料作成', isCompleted: false, priority: 'P2', dueDate: null, period: { start: new Date('2025-08-16').toISOString(), end: new Date('2025-08-18').toISOString() }, tags: ['#マーケティング'], subtasks: [] },
+			// テスト用：今日のP1タスク
+			{ id: 'task-urgent-today', title: '🔥 今日完了必須の緊急タスク', isCompleted: false, priority: 'P1', dueDate: new Date().toISOString(), period: null, tags: ['#緊急', '#今日完了'], subtasks: [] },
+			// テスト用：明日のP1タスク
+			{ id: 'task-urgent-tomorrow', title: '⚡ 明日の重要会議準備', isCompleted: false, priority: 'P1', dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), period: null, tags: ['#重要', '#会議'], subtasks: [] },
 		],
 		subProjects: [
 			{
