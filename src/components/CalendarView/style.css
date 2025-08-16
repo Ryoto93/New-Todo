@@ -1,0 +1,69 @@
+.calendar-view-container {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 16px;
+}
+
+.fc-event {
+  background-color: transparent !important;
+  border: none !important;
+  cursor: pointer;
+  margin: 3px 0;
+}
+
+.calendar-event-card {
+  background-color: #ffffff;
+  color: #333333;
+  border-radius: 10px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-size: 0.9em;
+  line-height: 1.4;
+  transition: box-shadow 0.2s ease;
+}
+
+.calendar-event-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.project-name {
+  color: #666666;
+  font-size: 0.8em;
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-title {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fc-daygrid-event-harness {
+  width: 100%;
+  display: block;
+  padding: 2px 0;
+}
+
+.fc-day-today {
+  background-color: #f0f8ff !important;
+}
+
+.fc-col-header-cell-cushion {
+  padding: 8px 0;
+  font-weight: 500;
+  color: #333333;
+}
+
+.fc-daygrid-day-number {
+  padding: 8px;
+  color: #666666;
+}
+
+.fc-day-today .fc-daygrid-day-number {
+  font-weight: 700;
+  color: #1890ff;
+} 

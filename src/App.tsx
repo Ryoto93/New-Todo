@@ -4,10 +4,14 @@ import { ProjectComponent } from './components/ProjectComponent';
 import { ProjectModal } from './components/ProjectModal';
 import type { Task, Project } from './types';
 import { TaskModal } from './components/TaskModal';
+import { ViewSwitcher } from './components/ViewSwitcher';
+import type { ViewMode } from './components/ViewSwitcher';
+import { CalendarView } from './components/CalendarView';
 import './App.css';
 
 function App() {
   const { projects, toggleTaskCompletion, addTask, deleteTask, updateTask, addProject, addSubProject, updateProject, deleteProject, toggleSubtaskCompletion, addSubtask, deleteSubtask, updateTaskTimeBlock } = useProjectData();
+  const [view, setView] = useState<ViewMode>('flow');
   const [modalState, setModalState] = useState<{ mode: 'edit' | 'add'; task?: Task; projectId?: string } | null>(null);
   const [projectModalState, setProjectModalState] = useState<{ mode: 'add' | 'addSub' | 'edit'; project?: Project; parentId?: string } | null>(null);
 
@@ -45,28 +49,35 @@ function App() {
       <header className="app-header">
         <h1>Flow TODO App</h1>
       </header>
-      <main>
-        <button className="add-project-button-header" onClick={handleOpenAddProjectModal}>
-          + 新規プロジェクトを作成
-        </button>
-        {projects.map(project => (
-          <ProjectComponent 
-            key={project.id} 
-            project={project} 
-            level={0} 
-            onToggleTask={toggleTaskCompletion}
-            onAddTask={addTask}
-            onDeleteTask={deleteTask}
-            onOpenEditModal={handleOpenEditModal}
-            onOpenAddModal={handleOpenAddModal}
-            onOpenAddSubProjectModal={handleOpenAddSubProjectModal}
-            onOpenEditProjectModal={handleOpenEditProjectModal}
-            onDeleteProject={deleteProject}
-            onToggleSubtask={toggleSubtaskCompletion}
-            onUpdateTaskTimeBlock={updateTaskTimeBlock}
-          />
-        ))}
-      </main>
+      <ViewSwitcher currentView={view} onViewChange={setView} />
+      {view === 'flow' ? (
+        <>
+          <main>
+            <button className="add-project-button-header" onClick={handleOpenAddProjectModal}>
+              + 新規プロジェクトを作成
+            </button>
+            {projects.map(project => (
+              <ProjectComponent 
+                key={project.id} 
+                project={project} 
+                level={0} 
+                onToggleTask={toggleTaskCompletion}
+                onAddTask={addTask}
+                onDeleteTask={deleteTask}
+                onOpenEditModal={handleOpenEditModal}
+                onOpenAddModal={handleOpenAddModal}
+                onOpenAddSubProjectModal={handleOpenAddSubProjectModal}
+                onOpenEditProjectModal={handleOpenEditProjectModal}
+                onDeleteProject={deleteProject}
+                onToggleSubtask={toggleSubtaskCompletion}
+                onUpdateTaskTimeBlock={updateTaskTimeBlock}
+              />
+            ))}
+          </main>
+        </>
+      ) : (
+        <CalendarView projects={projects} onTaskClick={handleOpenEditModal} />
+      )}
       {modalState && (
         <TaskModal
           taskToEdit={modalState.mode === 'edit' ? modalState.task : null}
