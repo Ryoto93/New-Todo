@@ -4,6 +4,9 @@
   gap: 10px;
   padding: 8px 12px;
   border-bottom: 1px solid #eee;
+  /* ★ 背景色を変数で制御するように変更 */
+  background-color: var(--task-bg-color, transparent);
+  transition: background-color 0.2s ease;
 }
 
 .task-item.completed .task-title {
@@ -70,4 +73,10 @@
 .delete-task-button:hover {
   background-color: #f0f0f0;
   color: #ff4d4f;
+}
+
+/* 魂の共鳴：dimmedクラスのスタイル */
+.task-item.dimmed {
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
 } 

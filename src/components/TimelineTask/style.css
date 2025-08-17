@@ -74,4 +74,10 @@
 /* ドラッグ中は呼吸アニメーションを一時停止 */
 .timeline-task.breathing.dragging {
   animation-play-state: paused;
+}
+
+/* 魂の共鳴：dimmedクラスのスタイル */
+.timeline-task.dimmed {
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
 } 

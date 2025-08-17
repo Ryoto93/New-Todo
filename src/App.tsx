@@ -14,6 +14,7 @@ function App() {
   const { projects, toggleTaskCompletion, addTask, deleteTask, updateTask, addProject, addSubProject, updateProject, deleteProject, toggleSubtaskCompletion, addSubtask, deleteSubtask, updateTaskTimeBlock } = useProjectData();
   const [view, setView] = useState<ViewMode>('flow');
   const [searchTerm, setSearchTerm] = useState('');
+  const [hoveredTag, setHoveredTag] = useState<string | null>(null);
   const [modalState, setModalState] = useState<{ mode: 'edit' | 'add'; task?: Task; projectId?: string } | null>(null);
   const [projectModalState, setProjectModalState] = useState<{ mode: 'add' | 'addSub' | 'edit'; project?: Project; parentId?: string } | null>(null);
 
@@ -75,6 +76,8 @@ function App() {
                 project={project} 
                 level={0} 
                 searchTerm={searchTerm}
+                hoveredTag={hoveredTag}
+                onHoverTag={setHoveredTag}
                 onToggleTask={toggleTaskCompletion}
                 onAddTask={addTask}
                 onDeleteTask={deleteTask}

@@ -8,16 +8,22 @@ import './style.css';
 
 type Props = {
   tasks: Task[];
+  hoveredTag: string | null;
+  onHoverTag: (tag: string | null) => void;
   onUpdateTaskTimeBlock: (taskId: string, targetBlock: string) => void;
 };
 
 // ドロップ可能な時間ブロックコンポーネント
 function DroppableTimeBlock({ 
   block, 
-  tasks
+  tasks,
+  hoveredTag,
+  onHoverTag
 }: { 
   block: string; 
   tasks: Task[];
+  hoveredTag: string | null;
+  onHoverTag: (tag: string | null) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: block });
 
@@ -29,14 +35,14 @@ function DroppableTimeBlock({
       <div className="time-block-header">{block}</div>
       <div className="time-block-content">
         {tasks.map(task => (
-          <TimelineTask key={task.id} task={task} />
+          <TimelineTask key={task.id} task={task} hoveredTag={hoveredTag} onHoverTag={onHoverTag} />
         ))}
       </div>
     </div>
   );
 }
 
-export function Timeline({ tasks, onUpdateTaskTimeBlock }: Props) {
+export function Timeline({ tasks, hoveredTag, onHoverTag, onUpdateTaskTimeBlock }: Props) {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -70,6 +76,8 @@ export function Timeline({ tasks, onUpdateTaskTimeBlock }: Props) {
                 key={block}
                 block={block}
                 tasks={tasksInBlock}
+                hoveredTag={hoveredTag}
+                onHoverTag={onHoverTag}
               />
             );
           })}
@@ -77,4 +85,4 @@ export function Timeline({ tasks, onUpdateTaskTimeBlock }: Props) {
       </div>
     </DndContext>
   );
-} 
+}

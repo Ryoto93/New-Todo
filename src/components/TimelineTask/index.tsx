@@ -4,9 +4,13 @@ import type { Task } from '../../types';
 import { getTaskTimeBlock } from '../../utils/dateUtils';
 import './style.css';
 
-type Props = { task: Task };
+type Props = { 
+  task: Task;
+  hoveredTag: string | null;
+  onHoverTag: (tag: string | null) => void;
+};
 
-export function TimelineTask({ task }: Props) {
+export function TimelineTask({ task, hoveredTag, onHoverTag }: Props) {
   const {
     attributes,
     listeners,
@@ -31,7 +35,9 @@ export function TimelineTask({ task }: Props) {
     console.log(`呼吸UI適用: ${task.title} (${task.priority}, ${timeBlock})`);
   }
   
-  const taskClassName = `timeline-task ${priorityColor[task.priority]} ${isDragging ? 'dragging' : ''} ${isUrgent ? 'breathing' : ''}`;
+  // ★ dimmedクラスを適用するかの判定ロジックを追加
+  const isDimmed = hoveredTag && !task.tags.includes(hoveredTag);
+  const taskClassName = `timeline-task ${priorityColor[task.priority]} ${isDragging ? 'dragging' : ''} ${isUrgent ? 'breathing' : ''} ${isDimmed ? 'dimmed' : ''}`;
 
   return (
     <div
@@ -43,6 +49,15 @@ export function TimelineTask({ task }: Props) {
       data-urgent={isUrgent}
       data-priority={task.priority}
       data-timeblock={timeBlock}
+      onMouseEnter={() => {
+        // ★ 複数のタグに対応できるよう少し変更
+        if (task.tags && task.tags.length > 0) {
+          task.tags.forEach(tag => onHoverTag(tag));
+        }
+      }}
+      onMouseLeave={() => {
+        onHoverTag(null);
+      }}
     >
       {task.title}
     </div>
