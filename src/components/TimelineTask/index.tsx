@@ -1,7 +1,7 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import type { Task } from '../../types';
-import { getTaskTimeBlock } from '../../utils/dateUtils';
+import { getTimeBlockConfig } from '../../utils/dateUtils';
 import './style.css';
 
 type Props = { 
@@ -27,7 +27,8 @@ export function TimelineTask({ task, hoveredTag, onHoverTag }: Props) {
   const priorityColor = { P1: 'p1', P2: 'p2', P3: 'p3', P4: 'p4' };
 
   // 呼吸UIを適用するかの判定ロジックを追加
-  const timeBlock = getTaskTimeBlock(task);
+  const { getBlock } = getTimeBlockConfig('day');
+  const timeBlock = getBlock(task);
   const isUrgent = task.priority === 'P1' && (timeBlock === '今日' || timeBlock === '明日');
   
   // デバッグ用のコンソール出力

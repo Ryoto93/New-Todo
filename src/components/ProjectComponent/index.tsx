@@ -19,41 +19,37 @@ const getAllTasks = (project: Project): Task[] => {
 
 type Props = {
   project: Project;
-  level: number; // 階層の深さを管理する新しいprops
-  searchTerm: string; // 検索キーワード
-  hoveredTag: string | null;
-  onHoverTag: (tag: string | null) => void;
-  onToggleTask: (taskId: string) => void; // propsの型定義を追加
-  onAddTask: (projectId: string, newTask: Task) => void; // 型定義追加
-  onDeleteTask: (taskId: string) => void; // 型定義追加
-  onOpenEditModal: (task: Task) => void; // 型定義追加
-  onOpenAddModal: (projectId: string) => void; // 型定義追加
-  onOpenAddSubProjectModal: (parentId: string) => void; // 型定義追加
-  onOpenEditProjectModal: (project: Project) => void; // 型定義追加
-  onDeleteProject: (projectId: string) => void; // 型定義追加
-  onToggleSubtask: (taskId: string, subtaskId: string) => void; // 型定義追加
-  onUpdateTaskTimeBlock: (taskId: string, targetBlock: string, zoomLevel: 'day' | 'week' | 'month') => void; // 型定義追加
+  level: number;
+  onToggleTask: (taskId: string) => void;
+  onOpenEditModal: (task: Task) => void;
+  onOpenAddModal: (projectId: string) => void;
+  onOpenAddSubProjectModal: (parentId: string) => void;
+  onOpenEditProjectModal: (project: Project) => void;
+  onDeleteProject: (projectId: string) => void;
+  onToggleSubtask: (taskId: string, subtaskId: string) => void;
+  onUpdateTaskTimeBlock: (taskId: string, targetBlock: string, zoomLevel: 'day' | 'week' | 'month') => void;
 };
 
 // ProjectCardからProjectComponentへ改名し、再帰的に自分を呼び出す
-export function ProjectComponent({ project, level, searchTerm, hoveredTag, onHoverTag, onToggleTask, onAddTask, onDeleteTask, onOpenEditModal, onOpenAddModal, onOpenAddSubProjectModal, onOpenEditProjectModal, onDeleteProject, onToggleSubtask, onUpdateTaskTimeBlock }: Props) {
+export function ProjectComponent({ project, level, onToggleTask, onOpenEditModal, onOpenAddModal, onOpenAddSubProjectModal, onOpenEditProjectModal, onDeleteProject, onToggleSubtask, onUpdateTaskTimeBlock }: Props) {
   const [sortOption, setSortOption] = useState<SortOption>('default');
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({ hideCompleted: false });
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('day');
+  const [searchTerm] = useState('');
+  const [hoveredTag, setHoveredTag] = useState<string | null>(null);
   
   const totalTasks = getTotalTasks(project);
   const completedTasks = getCompletedTasks(project);
   const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
   const healthEmoji = { green: '🟢', yellow: '🟡', red: '🔴' };
   const isSubProject = level > 0;
-  const allTasks = getAllTasks(project); // 全タスクを収集
+  const allTasks = getAllTasks(project);
 
-  // ★ 検索ロジックを追加
   const searchString = JSON.stringify(project).toLowerCase();
   const isVisible = searchTerm ? searchString.includes(searchTerm.toLowerCase()) : true;
 
   if (!isVisible) {
-    return null; // 検索にヒットしない場合は何も表示しない
+    return null;
   }
 
   // ★ ソートとフィルタを適用したタスクリストを計算
@@ -106,7 +102,7 @@ export function ProjectComponent({ project, level, searchTerm, hoveredTag, onHov
             <h4>タイムライン</h4>
             <ZoomControls currentZoom={zoomLevel} onZoomChange={setZoomLevel} />
           </div>
-          <Timeline tasks={allTasks} zoomLevel={zoomLevel} hoveredTag={hoveredTag} onHoverTag={onHoverTag} onUpdateTaskTimeBlock={(taskId, targetBlock) => onUpdateTaskTimeBlock(taskId, targetBlock, zoomLevel)} />
+          <Timeline tasks={allTasks} zoomLevel={zoomLevel} hoveredTag={hoveredTag} onHoverTag={setHoveredTag} onUpdateTaskTimeBlock={(taskId, targetBlock) => onUpdateTaskTimeBlock(taskId, targetBlock, zoomLevel)} />
         </div>
       )}
       <div className="project-contents">
@@ -122,7 +118,7 @@ export function ProjectComponent({ project, level, searchTerm, hoveredTag, onHov
           </div>
           <div className="task-list">
             {sortedAndFilteredTasks.map(task => 
-              <TaskItem key={task.id} task={task} hoveredTag={hoveredTag} onHoverTag={onHoverTag} onToggle={onToggleTask} onDelete={onDeleteTask} onOpenEditModal={onOpenEditModal} onToggleSubtask={onToggleSubtask} />
+              <TaskItem key={task.id} task={task} hoveredTag={hoveredTag} onHoverTag={setHoveredTag} onToggle={onToggleTask} onDelete={() => {}} onOpenEditModal={onOpenEditModal} onToggleSubtask={onToggleSubtask} />
             )}
             <button className="add-task-button-simple" onClick={() => onOpenAddModal(project.id)}>
               <PlusCircle size={16} />
@@ -137,12 +133,7 @@ export function ProjectComponent({ project, level, searchTerm, hoveredTag, onHov
                 key={subProject.id}
                 project={subProject}
                 level={level + 1}
-                searchTerm={searchTerm}
-                hoveredTag={hoveredTag}
-                onHoverTag={onHoverTag}
                 onToggleTask={onToggleTask}
-                onAddTask={onAddTask}
-                onDeleteTask={onDeleteTask}
                 onOpenEditModal={onOpenEditModal}
                 onOpenAddModal={onOpenAddModal}
                 onOpenAddSubProjectModal={onOpenAddSubProjectModal}
