@@ -148,4 +148,20 @@
   margin: 0;
   border: none;
   padding: 0;
+}
+
+/* タイムラインセクションのスタイル */
+.timeline-section {
+  margin-bottom: 24px;
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.timeline-header h4 {
+  margin: 0;
 } 

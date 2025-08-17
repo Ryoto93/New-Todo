@@ -3,6 +3,7 @@ import type { Project, Task } from '../../types';
 import { TaskItem } from '../TaskItem';
 import { Timeline } from '../Timeline';
 import { TaskFilterSort, type SortOption, type FilterOptions } from '../TaskFilterSort';
+import { ZoomControls, type ZoomLevel } from '../ZoomControls';
 // ★ アイコンをインポート
 import { Settings, Trash2, PlusCircle } from 'lucide-react';
 import './style.css';
@@ -31,13 +32,14 @@ type Props = {
   onOpenEditProjectModal: (project: Project) => void; // 型定義追加
   onDeleteProject: (projectId: string) => void; // 型定義追加
   onToggleSubtask: (taskId: string, subtaskId: string) => void; // 型定義追加
-  onUpdateTaskTimeBlock: (taskId: string, targetBlock: string) => void; // 型定義追加
+  onUpdateTaskTimeBlock: (taskId: string, targetBlock: string, zoomLevel: 'day' | 'week' | 'month') => void; // 型定義追加
 };
 
 // ProjectCardからProjectComponentへ改名し、再帰的に自分を呼び出す
 export function ProjectComponent({ project, level, searchTerm, hoveredTag, onHoverTag, onToggleTask, onAddTask, onDeleteTask, onOpenEditModal, onOpenAddModal, onOpenAddSubProjectModal, onOpenEditProjectModal, onDeleteProject, onToggleSubtask, onUpdateTaskTimeBlock }: Props) {
   const [sortOption, setSortOption] = useState<SortOption>('default');
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({ hideCompleted: false });
+  const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('day');
   
   const totalTasks = getTotalTasks(project);
   const completedTasks = getCompletedTasks(project);
@@ -98,7 +100,15 @@ export function ProjectComponent({ project, level, searchTerm, hoveredTag, onHov
       </div>
 
       {/* ★ ここから追加・変更 ★ */}
-      {level === 0 && <Timeline tasks={allTasks} hoveredTag={hoveredTag} onHoverTag={onHoverTag} onUpdateTaskTimeBlock={onUpdateTaskTimeBlock} />} {/* 最上位のプロジェクトにのみTimelineを表示、全タスクをpropsで渡す */}
+      {level === 0 && (
+        <div className="timeline-section">
+          <div className="timeline-header">
+            <h4>タイムライン</h4>
+            <ZoomControls currentZoom={zoomLevel} onZoomChange={setZoomLevel} />
+          </div>
+          <Timeline tasks={allTasks} zoomLevel={zoomLevel} hoveredTag={hoveredTag} onHoverTag={onHoverTag} onUpdateTaskTimeBlock={(taskId, targetBlock) => onUpdateTaskTimeBlock(taskId, targetBlock, zoomLevel)} />
+        </div>
+      )}
       <div className="project-contents">
         <div className="tasks-and-subprojects">
           <div className="tasks-header">

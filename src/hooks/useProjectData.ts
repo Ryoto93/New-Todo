@@ -278,24 +278,94 @@ export function useProjectData() {
 		setProjects(newProjects);
 	};
 
-	const updateTaskTimeBlock = (taskId: string, targetBlock: string) => {
-		const getNewDate = (block: string): Date | null => {
+	const updateTaskTimeBlock = (taskId: string, targetBlock: string, zoomLevel: 'day' | 'week' | 'month') => {
+		const getNewDate = (block: string, zoom: 'day' | 'week' | 'month'): Date | null => {
 			const now = new Date();
 			const todayJST = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
 			todayJST.setHours(23, 59, 59, 999); // 時刻は一日の終わりに設定
-			switch(block) {
-				case '今日': return todayJST;
-				case '明日': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 1));
-				case '3日後': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 3));
-				case '1週間後': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 7));
-				case '2週間後': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 14));
-				case 'それ以降': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 30));
-				default: return null;
+			
+			switch(zoom) {
+				case 'day':
+					switch(block) {
+						case '今日': return todayJST;
+						case '明日': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 1));
+						case '3日後': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 3));
+						case '1週間後': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 7));
+						case '2週間後': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 14));
+						case 'それ以降': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 30));
+						default: return null;
+					}
+				case 'week':
+					switch(block) {
+						case '今週': {
+							// 今週の月曜日を計算
+							const monday = new Date(todayJST);
+							const dayOfWeek = monday.getDay();
+							const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+							monday.setDate(monday.getDate() - daysToMonday);
+							return monday;
+						}
+						case '来週': {
+							// 来週の月曜日を計算
+							const nextMonday = new Date(todayJST);
+							const dayOfWeek = nextMonday.getDay();
+							const daysToNextMonday = dayOfWeek === 0 ? 7 : 8 - dayOfWeek;
+							nextMonday.setDate(nextMonday.getDate() + daysToNextMonday);
+							return nextMonday;
+						}
+						case '再来週': {
+							// 再来週の月曜日を計算
+							const nextNextMonday = new Date(todayJST);
+							const dayOfWeek = nextNextMonday.getDay();
+							const daysToNextNextMonday = dayOfWeek === 0 ? 14 : 15 - dayOfWeek;
+							nextNextMonday.setDate(nextNextMonday.getDate() + daysToNextNextMonday);
+							return nextNextMonday;
+						}
+						case '4週間後': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 28));
+						case 'それ以降': return new Date(new Date(todayJST).setDate(todayJST.getDate() + 60));
+						default: return null;
+					}
+				case 'month':
+					switch(block) {
+						case '今月': {
+							// 今月の1日を計算
+							const firstDayOfMonth = new Date(todayJST.getFullYear(), todayJST.getMonth(), 1);
+							return firstDayOfMonth;
+						}
+						case '来月': {
+							// 来月の1日を計算
+							const firstDayOfNextMonth = new Date(todayJST.getFullYear(), todayJST.getMonth() + 1, 1);
+							return firstDayOfNextMonth;
+						}
+						case '再来月': {
+							// 再来月の1日を計算
+							const firstDayOfNextNextMonth = new Date(todayJST.getFullYear(), todayJST.getMonth() + 2, 1);
+							return firstDayOfNextNextMonth;
+						}
+						case '3ヶ月後': {
+							// 3ヶ月後の1日を計算
+							const firstDayOfThreeMonthsLater = new Date(todayJST.getFullYear(), todayJST.getMonth() + 3, 1);
+							return firstDayOfThreeMonthsLater;
+						}
+						case 'それ以降': {
+							// 6ヶ月後の1日を計算
+							const firstDayOfSixMonthsLater = new Date(todayJST.getFullYear(), todayJST.getMonth() + 6, 1);
+							return firstDayOfSixMonthsLater;
+						}
+						default: return null;
+					}
+				default:
+					return null;
 			}
 		};
 
-		const newDueDate = getNewDate(targetBlock);
-		if (!newDueDate) return;
+		const newDueDate = getNewDate(targetBlock, zoomLevel);
+		if (!newDueDate) {
+			console.warn(`ズームレベル ${zoomLevel} でブロック "${targetBlock}" の日付計算に失敗しました`);
+			return;
+		}
+
+		console.log(`タスク ${taskId} を ${targetBlock} (ズームレベル: ${zoomLevel}) に移動: ${newDueDate.toISOString()}`);
 
 		const newProjects = JSON.parse(JSON.stringify(projects));
 
