@@ -3,6 +3,13 @@ export type Priority = 'P1' | 'P2' | 'P3' | 'P4';
 export type StrategicImportance = 'S' | 'A' | 'B' | 'C';
 export type Health = 'green' | 'yellow' | 'red';
 
+// ★ 新しいComment型を定義
+export interface Comment {
+	id: string;
+	content: string;
+	createdAt: string; // ISO 8601形式の文字列
+}
+
 export interface Subtask {
 	id: string;
 	title: string;
@@ -18,6 +25,7 @@ export interface Task {
 	period: { start: string; end: string } | null;
 	tags: string[];
 	subtasks: Subtask[];
+	comments: Comment[]; // ★ プロパティを追加
 }
 
 export interface Project {
@@ -27,4 +35,5 @@ export interface Project {
 	health: Health;
 	tasks: Task[];
 	subProjects: Project[];
+	comments: Comment[]; // ★ プロパティを追加
 } 

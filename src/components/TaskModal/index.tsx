@@ -8,6 +8,7 @@ type Props = {
   onSave: (task: Task) => void;
   onAddSubtask: (taskId: string, title: string) => void;
   onDeleteSubtask: (taskId: string, subtaskId: string) => void;
+  onAddComment: (targetId: string, content: string) => void;
 };
 
 const NEW_TASK_DEFAULTS: Omit<Task, 'id' | 'title'> = {
@@ -17,17 +18,19 @@ const NEW_TASK_DEFAULTS: Omit<Task, 'id' | 'title'> = {
   period: null,
   tags: [],
   subtasks: [],
+  comments: [],
 };
 
 type DateType = 'specific' | 'period';
 
-export function TaskModal({ taskToEdit, onClose, onSave, onAddSubtask, onDeleteSubtask }: Props) {
+export function TaskModal({ taskToEdit, onClose, onSave, onAddSubtask, onDeleteSubtask, onAddComment }: Props) {
   const [editedTask, setEditedTask] = useState<Omit<Task, 'id'>>(() =>
     taskToEdit ? { ...taskToEdit } : { title: '', ...NEW_TASK_DEFAULTS }
   );
   const [dateType, setDateType] = useState<DateType>(taskToEdit?.period ? 'period' : 'specific');
   const [hasTime, setHasTime] = useState(!!taskToEdit?.dueDate && taskToEdit.dueDate.slice(11) !== '00:00:00.000Z');
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
+  const [newComment, setNewComment] = useState('');
 
   const handleAddSubtask = () => {
     if (!newSubtaskTitle.trim() || !taskToEdit) return;
@@ -42,6 +45,29 @@ export function TaskModal({ taskToEdit, onClose, onSave, onAddSubtask, onDeleteS
     if (!taskToEdit) return;
     onDeleteSubtask(taskToEdit.id, subtaskId);
     setEditedTask(current => ({...current!, subtasks: current!.subtasks.filter(st => st.id !== subtaskId)}));
+  };
+
+  const handleAddComment = () => {
+    if (!newComment.trim()) return;
+    
+    console.log('コメント追加開始:', { newComment, taskToEdit: !!taskToEdit });
+    
+    // 編集モードの場合は既存のタスクにコメントを追加
+    if (taskToEdit) {
+      console.log('既存タスクにコメント追加:', taskToEdit.id);
+      onAddComment(taskToEdit.id, newComment);
+      // 即時反映のため、editedTaskのstateも更新
+      const comment = { id: `temp-${Date.now()}`, content: newComment, createdAt: new Date().toISOString() };
+      setEditedTask(current => ({...current!, comments: [...(current!.comments || []), comment]}));
+    } else {
+      console.log('新規タスクにコメント追加');
+      // 新規作成モードの場合は、editedTaskに直接コメントを追加
+      const comment = { id: `temp-${Date.now()}`, content: newComment, createdAt: new Date().toISOString() };
+      setEditedTask(current => ({...current!, comments: [...(current!.comments || []), comment]}));
+    }
+    
+    console.log('コメント追加完了');
+    setNewComment('');
   };
 
   const handleSave = () => {
@@ -170,6 +196,27 @@ export function TaskModal({ taskToEdit, onClose, onSave, onAddSubtask, onDeleteS
             </div>
           </div>
         )}
+
+        {/* コメントセクション */}
+        <div className="comment-section">
+          <label>コメント</label>
+          <div className="comment-list">
+            {editedTask.comments?.map(comment => (
+              <div key={comment.id} className="comment">
+                <p>{comment.content}</p>
+                <span>{new Date(comment.createdAt).toLocaleString('ja-JP')}</span>
+              </div>
+            ))}
+          </div>
+          <div className="add-comment-form">
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="コメントを追加..."
+            />
+            <button onClick={handleAddComment} disabled={!newComment.trim()}>投稿</button>
+          </div>
+        </div>
         
         <div className="modal-actions">
           <button onClick={onClose}>キャンセル</button>

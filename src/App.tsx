@@ -11,7 +11,7 @@ import { Search } from 'lucide-react';
 import './App.css';
 
 function App() {
-  const { projects, toggleTaskCompletion, addTask, updateTask, addProject, addSubProject, updateProject, deleteProject, toggleSubtaskCompletion, addSubtask, deleteSubtask, updateTaskTimeBlock } = useProjectData();
+  const { projects, toggleTaskCompletion, addTask, updateTask, addProject, addSubProject, updateProject, deleteProject, toggleSubtaskCompletion, addSubtask, deleteSubtask, updateTaskTimeBlock, addComment } = useProjectData();
   const [view, setView] = useState<ViewMode>('flow');
   const [searchTerm, setSearchTerm] = useState('');
   const [modalState, setModalState] = useState<{ mode: 'edit' | 'add'; task?: Task; projectId?: string } | null>(null);
@@ -96,6 +96,7 @@ function App() {
           onSave={handleSaveTask}
           onAddSubtask={addSubtask}
           onDeleteSubtask={deleteSubtask}
+          onAddComment={addComment}
         />
       )}
       {projectModalState && (
@@ -105,6 +106,7 @@ function App() {
           parentId={projectModalState.parentId}
           onClose={handleCloseProjectModal}
           onSave={handleSaveProject}
+          onAddComment={addComment}
         />
       )}
     </div>

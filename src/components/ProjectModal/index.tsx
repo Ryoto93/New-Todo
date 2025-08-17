@@ -8,6 +8,7 @@ type Props = {
   parentId?: string;
   onClose: () => void;
   onSave: (projectData: Project) => void;
+  onAddComment: (targetId: string, content: string) => void;
 };
 
 const NEW_PROJECT_DEFAULTS: Omit<Project, 'id' | 'name'> = {
@@ -15,12 +16,14 @@ const NEW_PROJECT_DEFAULTS: Omit<Project, 'id' | 'name'> = {
   health: 'green',
   tasks: [],
   subProjects: [],
+  comments: [],
 };
 
-export function ProjectModal({ mode, projectToEdit, parentId, onClose, onSave }: Props) {
+export function ProjectModal({ mode, projectToEdit, parentId, onClose, onSave, onAddComment }: Props) {
   const [editedProject, setEditedProject] = useState<Omit<Project, 'id'>>(() =>
     projectToEdit ? { ...projectToEdit } : { name: '', ...NEW_PROJECT_DEFAULTS }
   );
+  const [newComment, setNewComment] = useState('');
 
   const handleSave = () => {
     if (!editedProject.name.trim()) return;
@@ -36,6 +39,29 @@ export function ProjectModal({ mode, projectToEdit, parentId, onClose, onSave }:
     }
     
     onSave(completeProject);
+  };
+
+  const handleAddComment = () => {
+    if (!newComment.trim()) return;
+    
+    console.log('プロジェクトコメント追加開始:', { newComment, projectToEdit: !!projectToEdit });
+    
+    // 編集モードの場合は既存のプロジェクトにコメントを追加
+    if (projectToEdit) {
+      console.log('既存プロジェクトにコメント追加:', projectToEdit.id);
+      onAddComment(projectToEdit.id, newComment);
+      // 即時反映のため、editedProjectのstateも更新
+      const comment = { id: `temp-${Date.now()}`, content: newComment, createdAt: new Date().toISOString() };
+      setEditedProject(current => ({...current!, comments: [...(current!.comments || []), comment]}));
+    } else {
+      console.log('新規プロジェクトにコメント追加');
+      // 新規作成モードの場合は、editedProjectに直接コメントを追加
+      const comment = { id: `temp-${Date.now()}`, content: newComment, createdAt: new Date().toISOString() };
+      setEditedProject(current => ({...current!, comments: [...(current!.comments || []), comment]}));
+    }
+    
+    console.log('プロジェクトコメント追加完了');
+    setNewComment('');
   };
 
   const getModalTitle = () => {
@@ -81,6 +107,27 @@ export function ProjectModal({ mode, projectToEdit, parentId, onClose, onSave }:
           <option value="yellow">🟡 要注意</option>
           <option value="red">🔴 危険</option>
         </select>
+
+        {/* コメントセクション */}
+        <div className="comment-section">
+          <label>コメント</label>
+          <div className="comment-list">
+            {editedProject.comments?.map(comment => (
+              <div key={comment.id} className="comment">
+                <p>{comment.content}</p>
+                <span>{new Date(comment.createdAt).toLocaleString('ja-JP')}</span>
+              </div>
+            ))}
+          </div>
+          <div className="add-comment-form">
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="コメントを追加..."
+            />
+                          <button onClick={handleAddComment} disabled={!newComment.trim()}>投稿</button>
+          </div>
+        </div>
         
         <div className="modal-actions">
           <button onClick={onClose}>キャンセル</button>

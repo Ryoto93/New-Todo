@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Project, Task } from '../types';
+import type { Project, Task, Comment } from '../types';
 import { getItem, setItem } from '../utils/localStorage';
 import { initialData } from '../data/initialData';
 
@@ -141,6 +141,7 @@ export function useProjectData() {
 			health,
 			tasks: [],
 			subProjects: [],
+			comments: [], // ★ commentsプロパティを追加
 		};
 
 		setProjects(prevProjects => [...prevProjects, newProject]);
@@ -156,6 +157,7 @@ export function useProjectData() {
 			health,
 			tasks: [],
 			subProjects: [],
+			comments: [], // ★ commentsプロパティを追加
 		};
 
 		const newProjects = JSON.parse(JSON.stringify(projects));
@@ -344,6 +346,56 @@ export function useProjectData() {
 		setProjects(newProjects);
 	};
 
+	// ★ コメント追加機能を実装
+	const addComment = (targetId: string, content: string) => {
+		if (!content.trim()) return;
+
+		console.log('useProjectData: コメント追加開始:', { targetId, content });
+
+		const newComment: Comment = {
+			id: `comment-${Date.now()}`,
+			content: content.trim(),
+			createdAt: new Date().toISOString(),
+		};
+
+		console.log('useProjectData: 新しいコメント作成:', newComment);
+
+		const newProjects = JSON.parse(JSON.stringify(projects));
+
+		const findAndAddComment = (items: Project[]): boolean => {
+			for (const item of items) {
+				// プロジェクト自体がターゲットの場合
+				if (item.id === targetId) {
+					console.log('useProjectData: プロジェクトにコメント追加:', item.name);
+					item.comments.push(newComment);
+					return true;
+				}
+				// タスクがターゲットの場合
+				const task = item.tasks.find(t => t.id === targetId);
+				if (task) {
+					console.log('useProjectData: タスクにコメント追加:', task.title);
+					task.comments.push(newComment);
+					return true;
+				}
+				// サブプロジェクトを再帰的に探索
+				if (item.subProjects && findAndAddComment(item.subProjects)) {
+					return true;
+				}
+			}
+			return false;
+		};
+
+		const found = findAndAddComment(newProjects);
+		console.log('useProjectData: コメント追加結果:', found);
+
+		if (found) {
+			setProjects(newProjects);
+			console.log('useProjectData: プロジェクト状態更新完了');
+		} else {
+			console.warn('useProjectData: ターゲットが見つかりませんでした:', targetId);
+		}
+	};
+
 	// setProjectsは直接渡さず、必要な操作関数を渡すように変更
-	return { projects, toggleTaskCompletion, addTask, deleteTask, updateTask, addProject, addSubProject, updateProject, deleteProject, toggleSubtaskCompletion, addSubtask, deleteSubtask, updateTaskTimeBlock };
+	return { projects, toggleTaskCompletion, addTask, deleteTask, updateTask, addProject, addSubProject, updateProject, deleteProject, toggleSubtaskCompletion, addSubtask, deleteSubtask, updateTaskTimeBlock, addComment };
 } 
