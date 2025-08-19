@@ -39,7 +39,8 @@ export function CalendarView({ projects, onTaskClick }: Props) {
       start: task.period ? task.period.start : task.dueDate!,
       end: task.period ? new Date(new Date(task.period.end).getTime() + 86400000).toISOString().split('T')[0] : undefined,
       allDay: true,
-      extendedProps: { originalTask: task }
+      extendedProps: { originalTask: task },
+      className: task.isCompleted ? 'completed' : '' // ★ 完了タスクに印を付与！
     }));
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
