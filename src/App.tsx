@@ -11,7 +11,7 @@ import { Search } from 'lucide-react';
 import './App.css';
 
 function App() {
-  const { projects, toggleTaskCompletion, addTask, updateTask, addProject, addSubProject, updateProject, deleteProject, toggleSubtaskCompletion, addSubtask, deleteSubtask, updateTaskTimeBlock, addComment } = useProjectData();
+  const { projects, toggleTaskCompletion, addTask, deleteTask, updateTask, addProject, addSubProject, updateProject, deleteProject, toggleSubtaskCompletion, addSubtask, deleteSubtask, updateTaskTimeBlock, addComment } = useProjectData();
   const [view, setView] = useState<ViewMode>('flow');
   const [searchTerm, setSearchTerm] = useState('');
   const [modalState, setModalState] = useState<{ mode: 'edit' | 'add'; task?: Task; projectId?: string } | null>(null);
@@ -48,8 +48,21 @@ function App() {
 
   return (
     <div className="app-container">
-      <header className="app-header">
-        <h1>Flow TODO App</h1>
+      <header
+        className="app-header"
+        style={{
+          position: 'absolute',
+          top: '12px',
+          left: '20px',
+          fontSize: '0.65em',
+          color: '#666',
+          opacity: 0.08,
+          fontWeight: '300',
+          zIndex: 10,
+          letterSpacing: '0.5px',
+        }}
+      >
+        Todo
       </header>
       <div className="app-controls">
         <div className="search-bar">
@@ -75,6 +88,7 @@ function App() {
                 project={project}
                 level={0}
                 onToggleTask={toggleTaskCompletion}
+                onDeleteTask={deleteTask}
                 onOpenEditModal={handleOpenEditModal}
                 onOpenAddModal={handleOpenAddModal}
                 onOpenAddSubProjectModal={handleOpenAddSubProjectModal}

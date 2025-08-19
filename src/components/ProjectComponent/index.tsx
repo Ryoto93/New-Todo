@@ -21,6 +21,7 @@ type Props = {
   project: Project;
   level: number;
   onToggleTask: (taskId: string) => void;
+  onDeleteTask: (taskId: string) => void;
   onOpenEditModal: (task: Task) => void;
   onOpenAddModal: (projectId: string) => void;
   onOpenAddSubProjectModal: (parentId: string) => void;
@@ -31,7 +32,7 @@ type Props = {
 };
 
 // ProjectCardからProjectComponentへ改名し、再帰的に自分を呼び出す
-export function ProjectComponent({ project, level, onToggleTask, onOpenEditModal, onOpenAddModal, onOpenAddSubProjectModal, onOpenEditProjectModal, onDeleteProject, onToggleSubtask, onUpdateTaskTimeBlock }: Props) {
+export function ProjectComponent({ project, level, onToggleTask, onDeleteTask, onOpenEditModal, onOpenAddModal, onOpenAddSubProjectModal, onOpenEditProjectModal, onDeleteProject, onToggleSubtask, onUpdateTaskTimeBlock }: Props) {
   const [sortOption, setSortOption] = useState<SortOption>('default');
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({ hideCompleted: false });
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('day');
@@ -118,7 +119,7 @@ export function ProjectComponent({ project, level, onToggleTask, onOpenEditModal
           </div>
           <div className="task-list">
             {sortedAndFilteredTasks.map(task => 
-              <TaskItem key={task.id} task={task} hoveredTag={hoveredTag} onHoverTag={setHoveredTag} onToggle={onToggleTask} onDelete={() => {}} onOpenEditModal={onOpenEditModal} onToggleSubtask={onToggleSubtask} />
+              <TaskItem key={task.id} task={task} hoveredTag={hoveredTag} onHoverTag={setHoveredTag} onToggle={onToggleTask} onDelete={() => onDeleteTask(task.id)} onOpenEditModal={onOpenEditModal} onToggleSubtask={onToggleSubtask} />
             )}
             <button className="add-task-button-simple" onClick={() => onOpenAddModal(project.id)}>
               <PlusCircle size={16} />
@@ -134,6 +135,7 @@ export function ProjectComponent({ project, level, onToggleTask, onOpenEditModal
                 project={subProject}
                 level={level + 1}
                 onToggleTask={onToggleTask}
+                onDeleteTask={onDeleteTask}
                 onOpenEditModal={onOpenEditModal}
                 onOpenAddModal={onOpenAddModal}
                 onOpenAddSubProjectModal={onOpenAddSubProjectModal}

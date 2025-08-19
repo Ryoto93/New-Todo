@@ -16,8 +16,10 @@
     "@fullcalendar/daygrid": "^6.1.19",
     "@fullcalendar/interaction": "^6.1.19",
     "@fullcalendar/react": "^6.1.19",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.539.0",
     "react": "^19.1.1",
+    "react-day-picker": "^9.9.0",
     "react-dom": "^19.1.1"
   },
   "devDependencies": {

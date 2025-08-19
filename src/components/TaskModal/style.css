@@ -1,119 +1,210 @@
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0,0,0,0.5);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 20px;
 }
 
 .modal-content {
-  background: white;
-  padding: 20px 30px;
-  border-radius: 8px;
-  width: 400px;
+  background: var(--color-background, white);
+  border-radius: var(--border-radius-card, 12px);
+  width: 100%;
+  max-width: 550px;
+  box-shadow: var(--shadow-card, 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04));
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  max-height: 90vh;
+  overflow: hidden;
 }
 
-.modal-content h3 {
-  margin-top: 0;
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+  flex-shrink: 0;
+  background-color: var(--color-background, white);
 }
 
-.modal-content label {
-  font-weight: bold;
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.2em;
+  font-weight: 600;
+  color: var(--color-text-primary, #111827);
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-body label {
+  font-weight: 600;
   font-size: 0.9em;
+  color: var(--color-text-primary, #111827);
+  margin-bottom: 4px;
+  display: block;
 }
 
-.modal-content input,
-.modal-content select {
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+.modal-body input,
+.modal-body select,
+.modal-body textarea {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border, #d1d5db);
   width: 100%;
   box-sizing: border-box;
+  font-size: 0.9em;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-body input:focus,
+.modal-body select:focus,
+.modal-body textarea:focus {
+  outline: none;
+  border-color: var(--color-accent, #3b82f6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.modal-body textarea {
+  min-height: 80px;
+  resize: vertical;
+  font-family: inherit;
 }
 
 .modal-actions {
+  padding: 16px 24px;
+  border-top: 1px solid var(--color-border, #e5e7eb);
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 12px;
+  flex-shrink: 0;
+  background-color: var(--color-background-offset, #f9fafb);
 }
 
-.save-button {
-  background-color: #1890ff;
+.modal-actions button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border, #d1d5db);
+  background-color: var(--color-background, white);
+  color: var(--color-text-primary, #111827);
+  font-size: 0.9em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-actions button:hover {
+  background-color: var(--color-background-offset, #f3f4f6);
+  border-color: var(--color-border-hover, #9ca3af);
+}
+
+.modal-actions .save-button {
+  background-color: var(--color-accent, #3b82f6);
   color: white;
+  border-color: var(--color-accent, #3b82f6);
 }
 
-/* ファイルの末尾に追記 */
-.date-type-selector {
+.modal-actions .save-button:hover {
+  background-color: var(--color-accent-hover, #2563eb);
+  border-color: var(--color-accent-hover, #2563eb);
+}
+
+/* サブタスク管理セクション */
+.subtask-editor {
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  padding: 16px;
+  background-color: var(--color-background-offset, #f9fafb);
+}
+
+.subtask-item {
   display: flex;
-  gap: 15px;
-  margin-bottom: 10px;
-}
-
-.period-inputs {
-  display: flex;
-  gap: 10px;
-}
-
-.period-inputs > div {
-  flex: 1;
-}
-
-/* ファイルの末尾に追記 */
-.time-checkbox-label {
-  display: block;
-  margin-top: 5px;
-  font-weight: normal;
-  font-size: 0.9em;
-}
-
-.time-checkbox-label input {
-  margin-right: 5px;
-}
-
-.checkbox-wrapper {
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border-light, #f3f4f6);
 }
 
-.checkbox-wrapper input {
-  width: auto; /* inputの幅を自動調整 */
-  margin-right: 8px;
+.subtask-item:last-child {
+  border-bottom: none;
 }
 
-.checkbox-wrapper label {
-  font-weight: normal;
-  font-size: 0.9em;
+.delete-subtask-btn {
+  background: none;
+  border: none;
+  color: var(--color-danger, #ef4444);
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
-/* コメントセクションのスタイル */
+.delete-subtask-btn:hover {
+  background-color: var(--color-danger-light, #fef2f2);
+}
+
+.add-subtask-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.add-subtask-form input {
+  flex: 1;
+  margin: 0;
+}
+
+.add-subtask-form button {
+  padding: 8px 16px;
+  background-color: var(--color-accent, #3b82f6);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8em;
+  transition: background-color 0.2s;
+}
+
+.add-subtask-form button:hover:not(:disabled) {
+  background-color: var(--color-accent-hover, #2563eb);
+}
+
+.add-subtask-form button:disabled {
+  background-color: var(--color-disabled, #9ca3af);
+  cursor: not-allowed;
+}
+
+/* コメントセクション */
 .comment-section {
-  margin-top: 15px;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  padding: 16px;
+  background-color: var(--color-background-offset, #f9fafb);
 }
 
 .comment-list {
   max-height: 150px;
   overflow-y: auto;
-  border: 1px solid var(--color-border, #ccc);
+  border: 1px solid var(--color-border, #e5e7eb);
   border-radius: 6px;
-  padding: 10px;
-  margin-top: 5px;
+  padding: 12px;
+  margin: 8px 0;
+  background-color: var(--color-background, white);
 }
 
 .comment {
   font-size: 0.9em;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border-light, #f3f4f6);
 }
 
 .comment:last-child {
@@ -122,32 +213,97 @@
 }
 
 .comment p {
-  margin: 0 0 5px 0;
+  margin: 0 0 6px 0;
   white-space: pre-wrap;
   word-wrap: break-word;
+  color: var(--color-text-primary, #111827);
 }
 
 .comment span {
   font-size: 0.8em;
-  color: var(--color-text-secondary, #666);
+  color: var(--color-text-secondary, #6b7280);
 }
 
 .add-comment-form {
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .add-comment-form textarea {
-  width: 100%;
-  min-height: 60px;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  resize: vertical;
-  box-sizing: border-box;
+  margin-bottom: 8px;
 }
 
 .add-comment-form button {
   display: block;
-  margin-top: 5px;
   margin-left: auto;
+  padding: 8px 16px;
+  background-color: var(--color-accent, #3b82f6);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8em;
+  transition: background-color 0.2s;
+}
+
+.add-comment-form button:hover:not(:disabled) {
+  background-color: var(--color-accent-hover, #2563eb);
+}
+
+.add-comment-form button:disabled {
+  background-color: var(--color-disabled, #9ca3af);
+  cursor: not-allowed;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 16px;
+  }
+  
+  .modal-content {
+    max-width: 100%;
+    max-height: 95vh;
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-actions {
+    padding: 16px 20px;
+  }
+  
+  .modal-body {
+    gap: 14px;
+  }
+  
+  .add-subtask-form {
+    flex-direction: column;
+  }
+  
+  .add-subtask-form button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 12px;
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-actions {
+    padding: 14px 16px;
+  }
+  
+  .modal-body {
+    gap: 12px;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+  
+  .modal-actions button {
+    width: 100%;
+  }
 } 

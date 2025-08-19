@@ -1,0 +1,32 @@
+.custom-datepicker-wrapper {
+  background-color: var(--color-background-offset);
+  border-radius: var(--border-radius-button);
+  padding: 8px;
+}
+
+.rdp {
+  --rdp-cell-size: 36px;
+  --rdp-accent-color: var(--color-accent);
+  --rdp-background-color: #e7edff;
+  margin: 0;
+}
+
+.rdp-caption_label { 
+  font-size: 1em; 
+  font-weight: 600; 
+}
+
+.rdp-head_cell { 
+  font-size: 0.8em; 
+  font-weight: 500; 
+  color: var(--color-text-secondary); 
+}
+
+.rdp-button { 
+  border-radius: 50%; 
+  transition: background-color 150ms ease-in-out; 
+}
+
+.rdp-day_selected { 
+  font-weight: bold; 
+} 
